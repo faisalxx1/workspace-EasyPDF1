@@ -30,7 +30,7 @@ import {
   Highlighter,
   Star
 } from "lucide-react"
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Script from 'next/script'
 
 // Structured Data (JSON-LD)
@@ -256,10 +256,30 @@ const pdfTools: PDFTool[] = [
 export default function Home() {
   const { data: session, status } = useSession()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleToolClick = (toolId: string) => {
     // Navigate to the specific tool page
     window.location.href = `/tools/${toolId}`
+  }
+
+  const handleFileUpload = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file && file.type === 'application/pdf') {
+      // Here you would typically handle the file upload
+      // For now, let's redirect to the first available tool or show a success message
+      alert(`PDF file "${file.name}" selected! Upload functionality will be implemented soon.`)
+      // Reset the input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    } else if (file) {
+      alert('Please select a valid PDF file.')
+    }
   }
 
   const handleAuthClick = () => {
@@ -553,12 +573,19 @@ export default function Home() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up animation-delay-600">
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                
                 <Button 
                   size="lg" 
                   className="text-lg px-10 py-4 w-full sm:w-auto bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-                  onClick={() => {
-                    alert('Upload PDF functionality coming soon! This would open the file upload dialog.')
-                  }}
+                  onClick={handleFileUpload}
                 >
                   <Upload className="mr-3 h-5 w-5 group-hover:translate-y-[-2px] transition-transform duration-200" />
                   <span className="font-medium">Upload PDF</span>
@@ -571,7 +598,7 @@ export default function Home() {
                     document.getElementById('tools-section')?.scrollIntoView({ behavior: 'smooth' })
                   }}
                 >
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Explore Tools</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Explore Tools | اكتشف الأدوات</span>
                   <ArrowDown className="ml-2 h-5 w-5" />
                 </Button>
               </div>
