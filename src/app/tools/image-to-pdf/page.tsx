@@ -15,11 +15,15 @@ import {
 } from "lucide-react"
 import Link from 'next/link'
 import { useState, useRef } from 'react'
+import jsPDF from 'jspdf'
+import { saveAs } from 'file-saver'
 
 export default function ImageToPDFPage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
+  const [pdfBlob, setPdfBlob] = useState<Blob | null>(null)
+  const [pdfFileName, setPdfFileName] = useState<string>('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,18 +52,95 @@ export default function ImageToPDFPage() {
     
     setIsProcessing(true)
     
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    setIsProcessing(false)
-    setIsComplete(true)
+    try {
+      // Create a new PDF document
+      const pdf = new jsPDF()
+      
+      // Process each image and add it to the PDF
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i]
+        
+        // Add new page for each image except the first one
+        if (i > 0) {
+          pdf.addPage()
+        }
+        
+        // Convert image to base64
+        const base64 = await fileToBase64(file)
+        
+        // Get image dimensions
+        const img = new Image()
+        img.src = base64
+        
+        // Wait for image to load
+        await new Promise((resolve) => {
+          img.onload = resolve
+        })
+        
+        // Calculate dimensions to fit the page
+        const pageWidth = pdf.internal.pageSize.getWidth()
+        const pageHeight = pdf.internal.pageSize.getHeight()
+        const imgWidth = img.width
+        const imgHeight = img.height
+        const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight)
+        const scaledWidth = imgWidth * ratio
+        const scaledHeight = imgHeight * ratio
+        
+        // Center the image on the page
+        const x = (pageWidth - scaledWidth) / 2
+        const y = (pageHeight - scaledHeight) / 2
+        
+        // Add image to PDF
+        pdf.addImage(base64, 'JPEG', x, y, scaledWidth, scaledHeight)
+      }
+      
+      // Generate the PDF blob
+      const pdfBlob = pdf.output('blob')
+      
+      // Save the PDF
+      const fileName = selectedFiles.length === 1 
+        ? `${selectedFiles[0].name.replace(/\.[^/.]+$/, '')}.pdf`
+        : `converted-images-${Date.now()}.pdf`
+      
+      // Store the PDF blob and filename for download
+      setPdfBlob(pdfBlob)
+      setPdfFileName(fileName)
+      
+      // Auto-download the PDF
+      saveAs(pdfBlob, fileName)
+      
+      setIsProcessing(false)
+      setIsComplete(true)
+      
+    } catch (error) {
+      console.error('Error converting images to PDF:', error)
+      setIsProcessing(false)
+      alert('Error converting images to PDF. Please try again.')
+    }
+  }
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = error => reject(error)
+    })
   }
 
   const resetConverter = () => {
     setSelectedFiles([])
     setIsComplete(false)
+    setPdfBlob(null)
+    setPdfFileName('')
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
+    }
+  }
+
+  const downloadPDF = () => {
+    if (pdfBlob && pdfFileName) {
+      saveAs(pdfBlob, pdfFileName)
     }
   }
 
@@ -231,7 +312,11 @@ export default function ImageToPDFPage() {
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Button className="bg-green-600 hover:bg-green-700 text-white">
+                    <Button 
+                      onClick={downloadPDF}
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                      disabled={!pdfBlob}
+                    >
                       <Download className="h-4 w-4 mr-2" />
                       Download PDF
                     </Button>
