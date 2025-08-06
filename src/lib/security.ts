@@ -11,8 +11,9 @@ export class SecurityManager {
   constructor() {
     // In production, this should come from environment variables
     this.key = crypto.scryptSync(process.env.ENCRYPTION_KEY || 'default-secret-key', 'salt', 32)
-    this.uploadDir = path.join(process.cwd(), 'uploads')
-    this.outputDir = path.join(process.cwd(), 'outputs')
+    // Use /tmp directory for Vercel compatibility
+    this.uploadDir = path.join('/tmp', 'uploads')
+    this.outputDir = path.join('/tmp', 'outputs')
   }
 
   /**
@@ -20,8 +21,7 @@ export class SecurityManager {
    */
   encryptFileData(data: Buffer): { encryptedData: Buffer; iv: Buffer; authTag: Buffer } {
     const iv = crypto.randomBytes(16)
-    const cipher = crypto.createCipher(this.algorithm, this.key)
-    cipher.setAAD(Buffer.from('additional-data')) // Additional authenticated data
+    const cipher = crypto.createCipheriv(this.algorithm, this.key, iv)
     
     const encryptedData = Buffer.concat([
       cipher.update(data),
@@ -37,8 +37,7 @@ export class SecurityManager {
    * Decrypt file data
    */
   decryptFileData(encryptedData: Buffer, iv: Buffer, authTag: Buffer): Buffer {
-    const decipher = crypto.createDecipher(this.algorithm, this.key)
-    decipher.setAAD(Buffer.from('additional-data'))
+    const decipher = crypto.createDecipheriv(this.algorithm, this.key, iv)
     decipher.setAuthTag(authTag)
     
     return Buffer.concat([

@@ -50,7 +50,7 @@ export default function RotatePDFPage() {
       formData.append('files', selectedFile)
 
       try {
-        const response = await fetch('/api/upload', {
+        const response = await fetch('/api/upload-simple', {
           method: 'POST',
           body: formData,
         })

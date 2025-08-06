@@ -29,6 +29,7 @@ interface UploadedFile {
 export default function MergePDFPage() {
   const [files, setFiles] = useState<UploadedFile[]>([])
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [processing, setProcessing] = useState(false)
   const [progress, setProgress] = useState(0)
   const [result, setResult] = useState<{ success: boolean; message: string; downloadUrl?: string } | null>(null)
@@ -49,7 +50,7 @@ export default function MergePDFPage() {
         formData.append('files', file)
 
         try {
-          const response = await fetch('/api/upload', {
+          const response = await fetch('/api/upload-simple', {
             method: 'POST',
             body: formData,
           })
@@ -63,9 +64,14 @@ export default function MergePDFPage() {
               type: file.type,
               url: data.files[0].filePath
             })
+          } else {
+            const errorData = await response.json()
+            console.error('Upload failed:', errorData.error)
+            alert(`Upload failed: ${errorData.error || 'Unknown error'}`)
           }
         } catch (error) {
           console.error('Upload error:', error)
+          alert('Upload failed. Please try again.')
         }
       }
 
@@ -204,8 +210,10 @@ export default function MergePDFPage() {
 
                 {uploading && (
                   <div className="mt-4">
-                    <Progress value={progress} className="w-full" />
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">Uploading files...</p>
+                    <Progress value={uploadProgress} className="w-full" />
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                      Uploading files... {uploadProgress}%
+                    </p>
                   </div>
                 )}
               </CardContent>

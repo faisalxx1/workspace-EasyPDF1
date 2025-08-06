@@ -51,7 +51,7 @@ export default function UnlockPDFPage() {
       formData.append('files', selectedFile)
 
       try {
-        const response = await fetch('/api/upload', {
+        const response = await fetch('/api/upload-simple', {
           method: 'POST',
           body: formData,
         })
