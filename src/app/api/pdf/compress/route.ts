@@ -1,0 +1,110 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { pdfProcessor } from '@/lib/pdf-utils'
+import { db } from '@/lib/db'
+
+export async function POST(request: NextRequest) {
+  try {
+    const { fileId, options = {} } = await request.json()
+    
+    if (!fileId) {
+      return NextResponse.json(
+        { error: 'File ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Create processing job
+    const processingJob = await db.processingJob.create({
+      data: {
+        fileIds: JSON.stringify([fileId]),
+        operation: 'compress',
+        status: 'processing',
+        parameters: JSON.stringify(options),
+        userId: request.headers.get('user-id') || null
+      }
+    })
+
+    try {
+      // Get file path from database
+      const file = await db.pDFFile.findUnique({
+        where: { id: fileId }
+      })
+
+      if (!file) {
+        throw new Error('File not found')
+      }
+
+      // Process PDF compression
+      const result = await pdfProcessor.compressPDF(file.filePath, options)
+
+      // Update processing job
+      await db.processingJob.update({
+        where: { id: processingJob.id },
+        data: {
+          status: result.success ? 'completed' : 'failed',
+          progress: 100,
+          error: result.error,
+          completedAt: new Date()
+        }
+      })
+
+      // Create processing history
+      await db.processingHistory.create({
+        data: {
+          userId: request.headers.get('user-id') || null,
+          jobId: processingJob.id,
+          fileId: fileId,
+          operation: 'compress',
+          status: result.success ? 'completed' : 'failed',
+          parameters: JSON.stringify(options),
+          result: result.success ? JSON.stringify({ 
+            filePath: result.filePath, 
+            fileSize: result.fileSize,
+            originalSize: file.fileSize,
+            compressionRatio: ((file.fileSize - (result.fileSize || 0)) / file.fileSize * 100).toFixed(2) + '%'
+          }) : null,
+          error: result.error,
+          ipAddress: request.headers.get('x-forwarded-for') || request.ip || null,
+          userAgent: request.headers.get('user-agent') || null
+        }
+      })
+
+      if (!result.success) {
+        return NextResponse.json(
+          { error: result.error },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({
+        success: true,
+        jobId: processingJob.id,
+        filePath: result.filePath,
+        fileSize: result.fileSize,
+        originalSize: file.fileSize,
+        compressionRatio: ((file.fileSize - (result.fileSize || 0)) / file.fileSize * 100).toFixed(2) + '%',
+        downloadUrl: `/api/download?path=${encodeURIComponent(result.filePath)}`
+      })
+
+    } catch (error) {
+      // Update processing job with error
+      await db.processingJob.update({
+        where: { id: processingJob.id },
+        data: {
+          status: 'failed',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          completedAt: new Date()
+        }
+      })
+
+      throw error
+    }
+
+  } catch (error) {
+    console.error('Compress PDF error:', error)
+    return NextResponse.json(
+      { error: 'Failed to compress PDF' },
+      { status: 500 }
+    )
+  }
+}

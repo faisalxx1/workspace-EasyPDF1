@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  password      String?
+  image         String?
+  emailVerified DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  subscriptions Subscription[]
+  files         PDFFile[]
+  processingJobs ProcessingJob[]
+  processingHistory ProcessingHistory[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Subscription {
+  id                  String   @id @default(cuid())
+  userId              String
+  stripeSubscriptionId String   @unique
+  stripePriceId       String
+  stripeCustomerId    String
+  status              String   // "active", "canceled", "past_due", etc.
+  currentPeriodStart  DateTime
+  currentPeriodEnd    DateTime
+  cancelAtPeriodEnd   Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model PDFFile {
+  id          String   @id @default(cuid())
+  userId      String?
+  originalName String
+  fileName    String
+  filePath    String
+  fileSize    Int      // in bytes
+  mimeType    String
+  status      String   @default("uploaded") // "uploaded", "processing", "completed", "failed"
+  isEncrypted Boolean  @default(false)
+  uploadedAt  DateTime @default(now())
+  expiresAt   DateTime? // For automatic file deletion
+  deletedAt   DateTime?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  processingHistory ProcessingHistory[]
+
+  @@map("pdf_files")
+}
+
+model ProcessingJob {
+  id          String   @id @default(cuid())
+  userId      String?
+  fileIds     String   // JSON array of file IDs
+  operation   String   // "merge", "split", "compress", "convert", "rotate", "unlock", "watermark", "ocr", "esign"
+  status      String   @default("pending") // "pending", "processing", "completed", "failed"
+  progress    Int      @default(0) // 0-100
+  parameters  String   // JSON object with operation parameters
+  resultFileId String?
+  error       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  history     ProcessingHistory[]
+
+  @@map("processing_jobs")
+}
+
+model ProcessingHistory {
+  id          String   @id @default(cuid())
+  userId      String?
+  jobId       String?
+  fileId      String?
+  operation   String
+  status      String
+  parameters  String?  // JSON object
+  result      String?  // JSON object
+  error       String?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  user        User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  job         ProcessingJob?   @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  file        PDFFile?         @relation(fields: [fileId], references: [id], onDelete: SetNull)
+
+  @@map("processing_history")
+}
