@@ -25,7 +25,10 @@ import {
   Smartphone,
   User,
   Menu,
-  X
+  X,
+  Crown,
+  Highlighter,
+  Star
 } from "lucide-react"
 import { useState } from 'react'
 import Script from 'next/script'
@@ -78,6 +81,14 @@ interface PDFTool {
   title: string
   description: string
   icon: React.ReactNode
+  color: {
+    light: string
+    dark: string
+    bgLight: string
+    bgDark: string
+    hoverLight: string
+    hoverDark: string
+  }
   isPremium?: boolean
   comingSoon?: boolean
 }
@@ -87,55 +98,127 @@ const pdfTools: PDFTool[] = [
     id: "merge",
     title: "Merge PDF",
     description: "Combine multiple PDF files into a single document",
-    icon: <Merge className="h-8 w-8" />
+    icon: <Merge className="h-8 w-8" />,
+    color: {
+      light: "text-blue-600",
+      dark: "text-blue-400",
+      bgLight: "bg-blue-50",
+      bgDark: "bg-blue-900/20",
+      hoverLight: "bg-blue-100",
+      hoverDark: "bg-blue-900/30"
+    }
   },
   {
     id: "split",
     title: "Split PDF",
     description: "Divide a PDF into multiple files by page ranges",
-    icon: <Scissors className="h-8 w-8" />
+    icon: <Scissors className="h-8 w-8" />,
+    color: {
+      light: "text-purple-600",
+      dark: "text-purple-400",
+      bgLight: "bg-purple-50",
+      bgDark: "bg-purple-900/20",
+      hoverLight: "bg-purple-100",
+      hoverDark: "bg-purple-900/30"
+    }
   },
   {
     id: "compress",
     title: "Compress PDF",
     description: "Reduce PDF file size while maintaining quality",
-    icon: <Archive className="h-8 w-8" />
+    icon: <Archive className="h-8 w-8" />,
+    color: {
+      light: "text-green-600",
+      dark: "text-green-400",
+      bgLight: "bg-green-50",
+      bgDark: "bg-green-900/20",
+      hoverLight: "bg-green-100",
+      hoverDark: "bg-green-900/30"
+    }
   },
   {
     id: "convert",
     title: "Convert PDF",
     description: "Convert PDFs to and from other formats",
-    icon: <FileImage className="h-8 w-8" />
+    icon: <FileImage className="h-8 w-8" />,
+    color: {
+      light: "text-orange-600",
+      dark: "text-orange-400",
+      bgLight: "bg-orange-50",
+      bgDark: "bg-orange-900/20",
+      hoverLight: "bg-orange-100",
+      hoverDark: "bg-orange-900/30"
+    }
   },
   {
     id: "rotate",
     title: "Rotate PDF",
     description: "Rotate pages within a PDF document",
-    icon: <RotateCw className="h-8 w-8" />
+    icon: <RotateCw className="h-8 w-8" />,
+    color: {
+      light: "text-cyan-600",
+      dark: "text-cyan-400",
+      bgLight: "bg-cyan-50",
+      bgDark: "bg-cyan-900/20",
+      hoverLight: "bg-cyan-100",
+      hoverDark: "bg-cyan-900/30"
+    }
   },
   {
     id: "unlock",
     title: "Unlock PDF",
     description: "Remove password protection from PDFs",
-    icon: <Unlock className="h-8 w-8" />
+    icon: <Unlock className="h-8 w-8" />,
+    color: {
+      light: "text-red-600",
+      dark: "text-red-400",
+      bgLight: "bg-red-50",
+      bgDark: "bg-red-900/20",
+      hoverLight: "bg-red-100",
+      hoverDark: "bg-red-900/30"
+    }
   },
   {
     id: "watermark",
     title: "Watermark PDF",
     description: "Add text or image watermarks to PDFs",
-    icon: <PenTool className="h-8 w-8" />
+    icon: <PenTool className="h-8 w-8" />,
+    color: {
+      light: "text-indigo-600",
+      dark: "text-indigo-400",
+      bgLight: "bg-indigo-50",
+      bgDark: "bg-indigo-900/20",
+      hoverLight: "bg-indigo-100",
+      hoverDark: "bg-indigo-900/30"
+    }
   },
   {
     id: "annotate",
     title: "Annotate PDF",
     description: "Add comments, highlights, or drawings to PDFs",
-    icon: <PenTool className="h-8 w-8" />
+    icon: <Highlighter className="h-8 w-8" />,
+    color: {
+      light: "text-yellow-600",
+      dark: "text-yellow-400",
+      bgLight: "bg-yellow-50",
+      bgDark: "bg-yellow-900/20",
+      hoverLight: "bg-yellow-100",
+      hoverDark: "bg-yellow-900/30"
+    }
   },
   {
     id: "esign",
     title: "E-Sign PDF",
     description: "Add digital signatures to PDFs",
     icon: <Signature className="h-8 w-8" />,
+    color: {
+      light: "text-emerald-600",
+      dark: "text-emerald-400",
+      bgLight: "bg-emerald-50",
+      bgDark: "bg-emerald-900/20",
+      hoverLight: "bg-emerald-100",
+      hoverDark: "bg-emerald-900/30"
+    },
     isPremium: true
   },
   {
@@ -143,6 +226,14 @@ const pdfTools: PDFTool[] = [
     title: "OCR PDF",
     description: "Convert scanned PDFs into editable text",
     icon: <Scan className="h-8 w-8" />,
+    color: {
+      light: "text-pink-600",
+      dark: "text-pink-400",
+      bgLight: "bg-pink-50",
+      bgDark: "bg-pink-900/20",
+      hoverLight: "bg-pink-100",
+      hoverDark: "bg-pink-900/30"
+    },
     isPremium: true
   },
   {
@@ -150,6 +241,14 @@ const pdfTools: PDFTool[] = [
     title: "Batch Processing",
     description: "Process multiple files simultaneously",
     icon: <Layers className="h-8 w-8" />,
+    color: {
+      light: "text-teal-600",
+      dark: "text-teal-400",
+      bgLight: "bg-teal-50",
+      bgDark: "bg-teal-900/20",
+      hoverLight: "bg-teal-100",
+      hoverDark: "bg-teal-900/30"
+    },
     isPremium: true
   }
 ]
@@ -220,6 +319,10 @@ export default function Home() {
           animation-delay: 0.4s;
           opacity: 0;
         }
+        .animation-delay-600 {
+          animation-delay: 0.6s;
+          opacity: 0;
+        }
         
         @keyframes bounce {
           0%, 20%, 53%, 80%, 100% {
@@ -253,6 +356,19 @@ export default function Home() {
         }
         .animate-fade-in {
           animation: fade-in 0.3s ease-out;
+        }
+        
+        @keyframes gradient-x {
+          0%, 100% {
+            background-size: 200% 200%;
+            background-position: left center;
+          }
+          50% {
+            background-position: right center;
+          }
+        }
+        .animate-gradient-x {
+          animation: gradient-x 8s ease infinite;
         }
       `}</style>
       
@@ -404,32 +520,36 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="py-16 md:py-24 px-4 relative">
-        {/* Subtle sophisticated background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-gray-900"></div>
+      <section className="py-16 md:py-24 px-4 relative overflow-hidden">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-purple-900/20 animate-gradient-x"></div>
         
-        {/* Elegant geometric accent */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-slate-100 to-gray-200 dark:from-slate-800 dark:to-gray-700 rounded-full blur-3xl opacity-30"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-gray-100 to-slate-200 dark:from-gray-800 dark:to-slate-700 rounded-full blur-3xl opacity-20"></div>
+        {/* Floating geometric accents */}
+        <div className="absolute top-20 right-10 w-72 h-72 bg-gradient-to-br from-blue-200 to-purple-200 dark:from-blue-800 dark:to-purple-800 rounded-full blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute bottom-10 left-10 w-64 h-64 bg-gradient-to-tr from-purple-200 to-pink-200 dark:from-purple-800 dark:to-pink-800 rounded-full blur-3xl opacity-15 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-gradient-to-br from-cyan-200 to-blue-200 dark:from-cyan-800 dark:to-blue-800 rounded-full blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
 
         <div className="container mx-auto relative z-10">
           <div className="max-w-6xl mx-auto">
             <div className="text-center">
-              {/* Professional badge */}
-              <div className="inline-flex items-center px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-sm font-medium text-slate-700 dark:text-slate-300 mb-8 animate-fade-in-up">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                100% Free • No Registration Required
+              {/* Enhanced professional badge */}
+              <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-full text-sm font-semibold text-slate-700 dark:text-slate-300 mb-8 animate-fade-in-up shadow-lg border border-slate-200/50 dark:border-slate-700/50">
+                <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mr-3 animate-pulse shadow-sm"></div>
+                <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">100% Free</span>
+                <span className="mx-2 text-slate-400">•</span>
+                <span>No Registration Required</span>
+                <Star className="w-4 h-4 ml-2 text-amber-400 animate-bounce" />
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-900 dark:text-white mb-6 leading-tight animate-fade-in-up animation-delay-200">
                 Professional PDF Tools
                 <br />
-                <span className="text-slate-600 dark:text-slate-300 font-normal">for Modern Business</span>
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent font-normal">for Modern Business</span>
               </h1>
               
               <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-up animation-delay-400">
                 Streamline your document workflow with our comprehensive suite of PDF tools. 
-                <span className="font-semibold text-slate-800 dark:text-slate-200"> Merge, split, compress, convert, and secure</span> your PDFs with enterprise-grade reliability.
+                <span className="font-semibold bg-gradient-to-r from-slate-700 to-slate-900 dark:from-slate-300 dark:to-slate-100 bg-clip-text text-transparent"> Merge, split, compress, convert, and secure</span> your PDFs with enterprise-grade reliability.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up animation-delay-600">
@@ -496,12 +616,12 @@ export default function Home() {
               {pdfTools.map((tool) => (
                 <Card 
                   key={tool.id} 
-                  className="group cursor-pointer transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
+                  className="group cursor-pointer transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 backdrop-blur-sm"
                   onClick={() => handleToolClick(tool.id)}
                 >
                   <CardHeader className="text-center pb-4">
                     <div className="flex justify-center mb-4">
-                      <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:bg-slate-200 dark:group-hover:bg-slate-600 transition-all duration-300 group-hover:scale-105">
+                      <div className={`p-4 rounded-xl ${tool.color.bgLight} dark:${tool.color.bgDark} ${tool.color.light} dark:${tool.color.dark} group-hover:${tool.color.hoverLight} dark:group-hover:${tool.color.hoverDark} transition-all duration-300 group-hover:scale-110 shadow-lg group-hover:shadow-xl`}>
                         {tool.icon}
                       </div>
                     </div>
@@ -510,7 +630,8 @@ export default function Home() {
                         {tool.title}
                       </CardTitle>
                       {tool.isPremium && (
-                        <Badge variant="secondary" className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border-amber-200/50">
+                        <Badge variant="secondary" className="text-xs bg-gradient-to-r from-amber-100 to-amber-200 dark:from-amber-900/30 dark:to-amber-800/30 text-amber-800 dark:text-amber-300 border-amber-200/50 shadow-sm">
+                          <Crown className="w-3 h-3 mr-1" />
                           Premium
                         </Badge>
                       )}
@@ -522,14 +643,18 @@ export default function Home() {
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <CardDescription className="text-center text-sm text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors duration-200">
+                    <CardDescription className="text-center text-sm text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors duration-200 leading-relaxed">
                       {tool.description}
                     </CardDescription>
                     <Button 
                       variant="ghost" 
-                      className="w-full mt-4 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-all duration-200 border border-transparent hover:border-slate-200 dark:hover:border-slate-600"
+                      className={`w-full mt-4 font-medium transition-all duration-200 border border-transparent hover:border-slate-200 dark:hover:border-slate-600 shadow-sm hover:shadow-md ${
+                        tool.isPremium 
+                          ? 'bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 text-amber-700 dark:text-amber-300 hover:from-amber-100 hover:to-amber-200 dark:hover:from-amber-900/30 dark:hover:to-amber-800/30 hover:text-amber-800 dark:hover:text-amber-200' 
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+                      }`}
                     >
-                      <span className="font-medium">{tool.comingSoon ? "Notify Me" : "Use Tool"}</span>
+                      <span>{tool.comingSoon ? "Notify Me" : "Use Tool"}</span>
                       <ArrowUp className="ml-2 h-4 w-4 group-hover:translate-y-[-2px] transition-transform duration-200" />
                     </Button>
                   </CardContent>
@@ -558,7 +683,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
               <article className="text-center group hover:transform hover:scale-105 transition-all duration-300">
                 <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-lg transition-all duration-300">
-                  <Shield className="h-10 w-10 text-slate-600 dark:text-slate-400" />
+                  <Shield className="h-10 w-10 text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors" />
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                   100% Secure & Private
@@ -569,7 +694,7 @@ export default function Home() {
               </article>
               <article className="text-center group hover:transform hover:scale-105 transition-all duration-300">
                 <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-lg transition-all duration-300">
-                  <Zap className="h-10 w-10 text-slate-600 dark:text-slate-400" />
+                  <Zap className="h-10 w-10 text-yellow-600 dark:text-yellow-400 group-hover:text-yellow-700 dark:group-hover:text-yellow-300 transition-colors" />
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                   Lightning Fast Processing
@@ -580,7 +705,7 @@ export default function Home() {
               </article>
               <article className="text-center group hover:transform hover:scale-105 transition-all duration-300">
                 <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-lg transition-all duration-300">
-                  <Smartphone className="h-10 w-10 text-slate-600 dark:text-slate-400" />
+                  <Smartphone className="h-10 w-10 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors" />
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                   Works on All Devices
@@ -630,7 +755,7 @@ export default function Home() {
               <span className="text-lg font-semibold text-slate-900 dark:text-white">EasyPDF Tools</span>
             </div>
             <div className="text-sm text-slate-600 dark:text-slate-400 text-center md:text-left">
-              <p>© 2025 EasyPDF Tools. is Powered by SWARM Technologies All rights reserved.</p>
+              <p>© 2025 EasyPDF Tools is Powered by SWARM Technologies All rights reserved.</p>
               <p className="mt-1">Built for professional document management</p>
             </div>
           </div>
