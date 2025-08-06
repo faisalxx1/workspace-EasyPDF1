@@ -64,7 +64,7 @@ export default function CompressPDFPage() {
         if (response.ok) {
           const data = await response.json()
           setFile({
-            id: data.files[0].fileName,
+            id: data.files[0].id, // Use the database ID
             name: selectedFile.name,
             size: selectedFile.size,
             type: selectedFile.type,

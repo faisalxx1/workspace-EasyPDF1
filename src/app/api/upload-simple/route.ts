@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { writeFile } from 'fs/promises'
 import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
+import { db } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,13 +56,40 @@ export async function POST(request: NextRequest) {
       // Save file
       await writeFile(filePath, buffer)
       
-      uploadedFiles.push({
-        originalName: file.name,
-        fileName: fileName,
-        filePath: filePath,
-        size: file.size,
-        type: file.type
-      })
+      // Save file info to database
+      try {
+        const dbFile = await db.pDFFile.create({
+          data: {
+            originalName: file.name,
+            fileName: fileName,
+            filePath: filePath,
+            fileSize: file.size,
+            mimeType: file.type,
+            status: 'uploaded',
+            userId: request.headers.get('user-id') || null
+          }
+        })
+        
+        uploadedFiles.push({
+          id: dbFile.id,
+          originalName: file.name,
+          fileName: fileName,
+          filePath: filePath,
+          size: file.size,
+          type: file.type
+        })
+      } catch (dbError) {
+        console.error('Database error:', dbError)
+        // If database fails, still return the file info but without database ID
+        uploadedFiles.push({
+          id: fileName, // Use fileName as fallback ID
+          originalName: file.name,
+          fileName: fileName,
+          filePath: filePath,
+          size: file.size,
+          type: file.type
+        })
+      }
     }
 
     return NextResponse.json({

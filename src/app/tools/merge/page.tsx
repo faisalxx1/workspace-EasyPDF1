@@ -58,7 +58,7 @@ export default function MergePDFPage() {
           if (response.ok) {
             const data = await response.json()
             newFiles.push({
-              id: data.files[0].fileName,
+              id: data.files[0].id, // Use the database ID
               name: file.name,
               size: file.size,
               type: file.type,
