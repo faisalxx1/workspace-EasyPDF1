@@ -28,7 +28,8 @@ import {
   X,
   Crown,
   Highlighter,
-  Star
+  Star,
+  Globe
 } from "lucide-react"
 import { useState, useRef } from 'react'
 import Script from 'next/script'
@@ -256,6 +257,7 @@ const pdfTools: PDFTool[] = [
 export default function Home() {
   const { data: session, status } = useSession()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [language, setLanguage] = useState<'en' | 'ar'>('en')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleToolClick = (toolId: string) => {
@@ -288,6 +290,14 @@ export default function Home() {
     } else {
       signIn()
     }
+  }
+
+  const toggleLanguage = () => {
+    console.log('Language toggle clicked, current language:', language)
+    setLanguage(prev => {
+      console.log('Setting language from', prev, 'to', prev === 'en' ? 'ar' : 'en')
+      return prev === 'en' ? 'ar' : 'en'
+    })
   }
 
   return (
@@ -410,9 +420,14 @@ export default function Home() {
                 <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-all duration-300 shadow-sm group-hover:shadow-md">
                   <FileText className="h-6 w-6 text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors duration-200" />
                 </div>
-                <h1 className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">
-                  EasyPDF Tools
-                </h1>
+                <div className="flex flex-col">
+                  <h1 className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">
+                    EasyPDF Tools
+                  </h1>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                    Lang: {language.toUpperCase()}
+                  </div>
+                </div>
               </div>
             
             {/* Desktop Navigation */}
@@ -448,6 +463,17 @@ export default function Home() {
                 </div>
               ) : (
                 <>
+                  {/* Language Toggle Button */}
+                  <button
+                    onClick={toggleLanguage}
+                    className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 border border-slate-300 dark:border-slate-600"
+                    title={`${language === 'en' ? 'Switch to Arabic' : 'التبديل إلى الإنجليزية'} (Current: ${language.toUpperCase()})`}
+                  >
+                    <Globe className="h-4 w-4" />
+                    <span className="sr-only">
+                      {language === 'en' ? 'Switch to Arabic' : 'التبديل إلى الإنجليزية'}
+                    </span>
+                  </button>
                   <Button 
                     variant="outline" 
                     size="sm" 
@@ -518,6 +544,16 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="space-y-2">
+                    {/* Mobile Language Toggle */}
+                    <button
+                      onClick={toggleLanguage}
+                      className="w-full flex items-center justify-start p-3 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-all duration-200"
+                    >
+                      <Globe className="h-4 w-4 mr-3" />
+                      <span>
+                        {language === 'en' ? 'Switch to Arabic' : 'التبديل إلى الإنجليزية'} (Current: {language.toUpperCase()})
+                      </span>
+                    </button>
                     <Button 
                       variant="outline" 
                       className="w-full justify-start border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:border-slate-400 dark:hover:border-slate-500 transition-all duration-200"
@@ -598,7 +634,7 @@ export default function Home() {
                     document.getElementById('tools-section')?.scrollIntoView({ behavior: 'smooth' })
                   }}
                 >
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Explore Tools | اكتشف الأدوات</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Explore Tools</span>
                   <ArrowDown className="ml-2 h-5 w-5" />
                 </Button>
               </div>
