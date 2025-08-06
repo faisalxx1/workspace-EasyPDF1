@@ -64,6 +64,7 @@ const structuredData = {
     "Add watermark to PDF",
     "E-sign PDF documents",
     "OCR scanned PDFs",
+    "Convert images to PDF",
     "Batch process PDFs"
   ],
   "offers": {
@@ -90,7 +91,6 @@ interface PDFTool {
     hoverLight: string
     hoverDark: string
   }
-  isPremium?: boolean
   comingSoon?: boolean
 }
 
@@ -220,7 +220,6 @@ const pdfTools: PDFTool[] = [
       hoverLight: "bg-emerald-100",
       hoverDark: "bg-emerald-900/30"
     },
-    isPremium: true
   },
   {
     id: "ocr",
@@ -235,7 +234,20 @@ const pdfTools: PDFTool[] = [
       hoverLight: "bg-pink-100",
       hoverDark: "bg-pink-900/30"
     },
-    isPremium: true
+  },
+  {
+    id: "image-to-pdf",
+    title: "Image to PDF",
+    description: "Convert images to PDF format",
+    icon: <FileImage className="h-8 w-8" />,
+    color: {
+      light: "text-violet-600",
+      dark: "text-violet-400",
+      bgLight: "bg-violet-50",
+      bgDark: "bg-violet-900/20",
+      hoverLight: "bg-violet-100",
+      hoverDark: "bg-violet-900/30"
+    }
   },
   {
     id: "batch",
@@ -249,8 +261,7 @@ const pdfTools: PDFTool[] = [
       bgDark: "bg-teal-900/20",
       hoverLight: "bg-teal-100",
       hoverDark: "bg-teal-900/30"
-    },
-    isPremium: true
+    }
   }
 ]
 
@@ -692,12 +703,6 @@ export default function Home() {
                       <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors duration-200">
                         {tool.title}
                       </CardTitle>
-                      {tool.isPremium && (
-                        <Badge variant="secondary" className="text-xs bg-gradient-to-r from-amber-100 to-amber-200 dark:from-amber-900/30 dark:to-amber-800/30 text-amber-800 dark:text-amber-300 border-amber-200/50 shadow-sm">
-                          <Crown className="w-3 h-3 mr-1" />
-                          Premium
-                        </Badge>
-                      )}
                       {tool.comingSoon && (
                         <Badge variant="outline" className="text-xs border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400">
                           Coming Soon
@@ -711,11 +716,7 @@ export default function Home() {
                     </CardDescription>
                     <Button 
                       variant="ghost" 
-                      className={`w-full mt-4 font-medium transition-all duration-200 border border-transparent hover:border-slate-200 dark:hover:border-slate-600 shadow-sm hover:shadow-md ${
-                        tool.isPremium 
-                          ? 'bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 text-amber-700 dark:text-amber-300 hover:from-amber-100 hover:to-amber-200 dark:hover:from-amber-900/30 dark:hover:to-amber-800/30 hover:text-amber-800 dark:hover:text-amber-200' 
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
-                      }`}
+                      className="w-full mt-4 font-medium transition-all duration-200 border border-transparent hover:border-slate-200 dark:hover:border-slate-600 shadow-sm hover:shadow-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
                     >
                       <span>{tool.comingSoon ? "Notify Me" : "Use Tool"}</span>
                       <ArrowUp className="ml-2 h-4 w-4 group-hover:translate-y-[-2px] transition-transform duration-200" />
