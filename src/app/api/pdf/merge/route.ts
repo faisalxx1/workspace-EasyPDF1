@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { pdfProcessor } from '@/lib/pdf-utils'
 import { db, withDb } from '@/lib/db'
-import { PDFFile, ProcessingJob, ProcessingHistory } from '@prisma/client'
 
 export async function POST(request: NextRequest) {
   return await withDb(async () => {
@@ -18,11 +17,12 @@ export async function POST(request: NextRequest) {
       // Create processing job
       const processingJob = await db.processingJob.create({
         data: {
+          userId: request.headers.get('user-id') || null,
           fileIds: JSON.stringify(fileIds),
           operation: 'merge',
-          status: 'processing',
-          parameters: JSON.stringify(options),
-          userId: request.headers.get('user-id') || null
+          status: 'pending',
+          progress: 0,
+          parameters: JSON.stringify(options)
         }
       })
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
             parameters: JSON.stringify(options),
             result: result.success ? JSON.stringify({ filePath: result.filePath, fileSize: result.fileSize }) : null,
             error: result.error,
-            ipAddress: request.headers.get('x-forwarded-for') || request.ip || null,
+            ipAddress: request.headers.get('x-forwarded-for') || null,
             userAgent: request.headers.get('user-agent') || null
           }
         })
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
           jobId: processingJob.id,
           filePath: result.filePath,
           fileSize: result.fileSize,
-          downloadUrl: `/api/download?path=${encodeURIComponent(result.filePath)}`
+          downloadUrl: result.filePath ? `/api/download?path=${encodeURIComponent(result.filePath)}` : undefined
         })
 
       } catch (error) {

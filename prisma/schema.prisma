@@ -80,21 +80,20 @@ model Subscription {
 }
 
 model PDFFile {
-  id          String   @id @default(cuid())
-  userId      String?
+  id           String    @id @default(cuid())
+  userId       String?
   originalName String
-  fileName    String
-  filePath    String
-  fileSize    Int      // in bytes
-  mimeType    String
-  status      String   @default("uploaded") // "uploaded", "processing", "completed", "failed"
-  isEncrypted Boolean  @default(false)
-  uploadedAt  DateTime @default(now())
-  expiresAt   DateTime? // For automatic file deletion
-  deletedAt   DateTime?
+  fileName     String
+  filePath     String
+  fileSize     Int      // in bytes
+  mimeType     String
+  status       String   @default("uploaded")
+  isEncrypted  Boolean  @default(false)
+  uploadedAt   DateTime @default(now())
+  expiresAt    DateTime?
+  deletedAt    DateTime?
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
-
   processingHistory ProcessingHistory[]
 
   @@map("pdf_files")

@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       // Directory already exists
     }
 
-    const uploadedFiles = []
+    const uploadedFiles: { id: string; originalName: string; fileName: string; filePath: string; size: number; type: string; }[] = []
 
     for (const file of files) {
       // Validate file type

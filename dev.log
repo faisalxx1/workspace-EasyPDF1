@@ -188,3 +188,7 @@ The table `main.processing_jobs` does not exist in the current database.
   clientVersion: '6.13.0'
 }
  POST /api/pdf/merge 500 in 66ms
+ ✓ Compiled in 297ms (473 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /tools/split 200 in 71ms
+ GET /tools/merge 200 in 73ms
