@@ -30,6 +30,16 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/pdf/split/route.js"
+    ],
+    "/tools/merge/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tools/merge/page.js"
+    ],
+    "/api/pdf/merge/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/pdf/merge/route.js"
     ]
   }
 }

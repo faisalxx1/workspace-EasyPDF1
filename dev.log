@@ -80,3 +80,111 @@ The table `main.processing_jobs` does not exist in the current database.
 }
  POST /api/pdf/split 500 in 327ms
 prisma:query INSERT INTO `main`.`processing_jobs` (`id`, `userId`, `fileIds`, `operation`, `status`, `progress`, `parameters`, `createdAt`, `updatedAt`) VALUES (?,?,?,?,?,?,?,?,?) RETURNING `id` AS `id`, `userId` AS `userId`, `fileIds` AS `fileIds`, `operation` AS `operation`, `status` AS `status`, `progress` AS `progress`, `parameters` AS `parameters`, `resultFileId` AS `resultFileId`, `error` AS `error`, `startedAt` AS `startedAt`, `completedAt` AS `completedAt`, `createdAt` AS `createdAt`, `updatedAt` AS `updatedAt`
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 156ms
+ GET /api/auth/session 200 in 65ms
+ GET /favicon.ico 200 in 13ms
+Database directory exists: .
+Database connected successfully
+ GET / 200 in 88ms
+ GET /favicon.ico 200 in 4ms
+ GET /api/auth/session 200 in 6ms
+Database directory exists: .
+Database connected successfully
+ ✓ Compiled /tools/merge in 489ms (1295 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /tools/merge 200 in 631ms
+Database directory exists: .
+Database connected successfully
+ GET /api/auth/session 200 in 33ms
+Database directory exists: .
+Database connected successfully
+ ✓ Compiled /api/upload-simple in 112ms (860 modules)
+Database directory exists: .
+Database connected successfully
+prisma:query SELECT 1
+prisma:query INSERT INTO `main`.`pdf_files` (`id`, `userId`, `originalName`, `fileName`, `filePath`, `fileSize`, `mimeType`, `status`, `isEncrypted`, `uploadedAt`) VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING `id` AS `id`, `userId` AS `userId`, `originalName` AS `originalName`, `fileName` AS `fileName`, `filePath` AS `filePath`, `fileSize` AS `fileSize`, `mimeType` AS `mimeType`, `status` AS `status`, `isEncrypted` AS `isEncrypted`, `uploadedAt` AS `uploadedAt`, `expiresAt` AS `expiresAt`, `deletedAt` AS `deletedAt`
+Database error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.pDFFile.create()` invocation:
+
+
+The table `main.pdf_files` does not exist in the current database.
+    at async POST (src/app/api/upload-simple/route.ts:61:23)
+  59 |       // Save file info to database
+  60 |       try {
+> 61 |         const dbFile = await db.pDFFile.create({
+     |                       ^
+  62 |           data: {
+  63 |             originalName: file.name,
+  64 |             fileName: fileName, {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/upload-simple 200 in 183ms
+prisma:query INSERT INTO `main`.`pdf_files` (`id`, `userId`, `originalName`, `fileName`, `filePath`, `fileSize`, `mimeType`, `status`, `isEncrypted`, `uploadedAt`) VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING `id` AS `id`, `userId` AS `userId`, `originalName` AS `originalName`, `fileName` AS `fileName`, `filePath` AS `filePath`, `fileSize` AS `fileSize`, `mimeType` AS `mimeType`, `status` AS `status`, `isEncrypted` AS `isEncrypted`, `uploadedAt` AS `uploadedAt`, `expiresAt` AS `expiresAt`, `deletedAt` AS `deletedAt`
+Database error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.pDFFile.create()` invocation:
+
+
+The table `main.pdf_files` does not exist in the current database.
+    at async POST (src/app/api/upload-simple/route.ts:61:23)
+  59 |       // Save file info to database
+  60 |       try {
+> 61 |         const dbFile = await db.pDFFile.create({
+     |                       ^
+  62 |           data: {
+  63 |             originalName: file.name,
+  64 |             fileName: fileName, {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/upload-simple 200 in 35ms
+ ✓ Compiled /api/pdf/merge in 130ms (1495 modules)
+Database directory exists: .
+Database connected successfully
+Database connected for operation
+prisma:query INSERT INTO `main`.`processing_jobs` (`id`, `userId`, `fileIds`, `operation`, `status`, `progress`, `parameters`, `createdAt`, `updatedAt`) VALUES (?,?,?,?,?,?,?,?,?) RETURNING `id` AS `id`, `userId` AS `userId`, `fileIds` AS `fileIds`, `operation` AS `operation`, `status` AS `status`, `progress` AS `progress`, `parameters` AS `parameters`, `resultFileId` AS `resultFileId`, `error` AS `error`, `startedAt` AS `startedAt`, `completedAt` AS `completedAt`, `createdAt` AS `createdAt`, `updatedAt` AS `updatedAt`
+Merge PDF error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.processingJob.create()` invocation:
+
+
+The table `main.processing_jobs` does not exist in the current database.
+    at async eval (src/app/api/pdf/merge/route.ts:19:28)
+    at async withDb (src/lib/db.ts:55:11)
+    at async POST (src/app/api/pdf/merge/route.ts:7:9)
+  17 |
+  18 |       // Create processing job
+> 19 |       const processingJob = await db.processingJob.create({
+     |                            ^
+  20 |         data: {
+  21 |           fileIds: JSON.stringify(fileIds),
+  22 |           operation: 'merge', {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/pdf/merge 500 in 244ms
+Database connected for operation
+prisma:query INSERT INTO `main`.`processing_jobs` (`id`, `userId`, `fileIds`, `operation`, `status`, `progress`, `parameters`, `createdAt`, `updatedAt`) VALUES (?,?,?,?,?,?,?,?,?) RETURNING `id` AS `id`, `userId` AS `userId`, `fileIds` AS `fileIds`, `operation` AS `operation`, `status` AS `status`, `progress` AS `progress`, `parameters` AS `parameters`, `resultFileId` AS `resultFileId`, `error` AS `error`, `startedAt` AS `startedAt`, `completedAt` AS `completedAt`, `createdAt` AS `createdAt`, `updatedAt` AS `updatedAt`
+Merge PDF error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.processingJob.create()` invocation:
+
+
+The table `main.processing_jobs` does not exist in the current database.
+    at async eval (src/app/api/pdf/merge/route.ts:19:28)
+    at async withDb (src/lib/db.ts:55:11)
+    at async POST (src/app/api/pdf/merge/route.ts:7:9)
+  17 |
+  18 |       // Create processing job
+> 19 |       const processingJob = await db.processingJob.create({
+     |                            ^
+  20 |         data: {
+  21 |           fileIds: JSON.stringify(fileIds),
+  22 |           operation: 'merge', {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/pdf/merge 500 in 66ms
