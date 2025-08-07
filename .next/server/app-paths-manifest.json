@@ -1,1 +1,8 @@
-{}
+{
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/upload-simple/route": "app/api/upload-simple/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/api/pdf/split/route": "app/api/pdf/split/route.js",
+  "/page": "app/page.js",
+  "/tools/split/page": "app/tools/split/page.js"
+}

@@ -3,19 +3,105 @@
 [33m[nodemon] watching path(s): server.ts src/**/*[39m
 [33m[nodemon] watching extensions: ts,tsx,js,jsx[39m
 [32m[nodemon] starting `npx tsx server.ts`[39m
- ⨯ uncaughtException: Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
-    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
-  code: 'EADDRINUSE',
-  errno: -48,
-  syscall: 'listen',
-  address: '0.0.0.0',
-  port: 3000
+ ⚠ Invalid next.config.js options detected: 
+ ⚠     Unrecognized key(s) in object: 'default'
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+> Ready on http://0.0.0.0:3000
+> Socket.IO server running at ws://0.0.0.0:3000/api/socketio
+ ○ Compiling / ...
+ ✓ Compiled / in 2s (927 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 2423ms
+ ⚠ Cross origin request detected from 0.0.0.0 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ✓ Compiled /api/auth/[...nextauth] in 181ms (508 modules)
+ ✓ Compiled in 444ms (436 modules)
+Database directory exists: .
+ GET /favicon.ico 200 in 1402ms
+Database connected successfully
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET / 200 in 413ms
+ ✓ Compiled in 107ms (436 modules)
+ GET / 200 in 19ms
+Database directory exists: .
+Database connected successfully
+ GET /api/auth/session 200 in 1649ms
+ ✓ Compiled /tools/split in 281ms (1286 modules)
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /tools/split 200 in 418ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+Database directory exists: .
+Database connected successfully
+ GET /api/auth/session 200 in 32ms
+Database directory exists: .
+Database connected successfully
+ ✓ Compiled /api/upload-simple in 140ms (1310 modules)
+Database directory exists: .
+Database connected successfully
+prisma:query INSERT INTO `main`.`pdf_files` (`id`, `userId`, `originalName`, `fileName`, `filePath`, `fileSize`, `mimeType`, `status`, `isEncrypted`, `uploadedAt`) VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING `id` AS `id`, `userId` AS `userId`, `originalName` AS `originalName`, `fileName` AS `fileName`, `filePath` AS `filePath`, `fileSize` AS `fileSize`, `mimeType` AS `mimeType`, `status` AS `status`, `isEncrypted` AS `isEncrypted`, `uploadedAt` AS `uploadedAt`, `expiresAt` AS `expiresAt`, `deletedAt` AS `deletedAt`
+Database error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.pDFFile.create()` invocation:
+
+
+The table `main.pdf_files` does not exist in the current database.
+    at async POST (src/app/api/upload-simple/route.ts:61:23)
+  59 |       // Save file info to database
+  60 |       try {
+> 61 |         const dbFile = await db.pDFFile.create({
+     |                       ^
+  62 |           data: {
+  63 |             originalName: file.name,
+  64 |             fileName: fileName, {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
 }
- ⨯ uncaughtException:  Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
-    at <unknown> (Error: listen EADDRINUSE: address already in use 0.0.0.0:3000) {
-  code: 'EADDRINUSE',
-  errno: -48,
-  syscall: 'listen',
-  address: '0.0.0.0',
-  port: 3000
+ POST /api/upload-simple 200 in 226ms
+ ✓ Compiled /api/pdf/split in 460ms (1486 modules)
+Database directory exists: .
+Database connected successfully
+Database connected for operation
+Split PDF error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.processingJob.create()` invocation:
+
+
+The table `main.processing_jobs` does not exist in the current database.
+    at async eval (src/app/api/pdf/split/route.ts:25:28)
+    at async withDb (src/lib/db.ts:55:11)
+    at async POST (src/app/api/pdf/split/route.ts:6:9)
+  23 |
+  24 |       // Create processing job
+> 25 |       const processingJob = await db.processingJob.create({
+     |                            ^
+  26 |         data: {
+  27 |           fileIds: JSON.stringify([fileId]),
+  28 |           operation: 'split', {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
 }
+ POST /api/pdf/split 500 in 568ms
+prisma:query SELECT 1
+prisma:query INSERT INTO `main`.`processing_jobs` (`id`, `userId`, `fileIds`, `operation`, `status`, `progress`, `parameters`, `createdAt`, `updatedAt`) VALUES (?,?,?,?,?,?,?,?,?) RETURNING `id` AS `id`, `userId` AS `userId`, `fileIds` AS `fileIds`, `operation` AS `operation`, `status` AS `status`, `progress` AS `progress`, `parameters` AS `parameters`, `resultFileId` AS `resultFileId`, `error` AS `error`, `startedAt` AS `startedAt`, `completedAt` AS `completedAt`, `createdAt` AS `createdAt`, `updatedAt` AS `updatedAt`
+Database connected for operation
+prisma:query INSERT INTO `main`.`processing_jobs` (`id`, `userId`, `fileIds`, `operation`, `status`, `progress`, `parameters`, `createdAt`, `updatedAt`) VALUES (?,?,?,?,?,?,?,?,?) RETURNING `id` AS `id`, `userId` AS `userId`, `fileIds` AS `fileIds`, `operation` AS `operation`, `status` AS `status`, `progress` AS `progress`, `parameters` AS `parameters`, `resultFileId` AS `resultFileId`, `error` AS `error`, `startedAt` AS `startedAt`, `completedAt` AS `completedAt`, `createdAt` AS `createdAt`, `updatedAt` AS `updatedAt`
+Split PDF error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.processingJob.create()` invocation:
+
+
+The table `main.processing_jobs` does not exist in the current database.
+    at async eval (src/app/api/pdf/split/route.ts:25:28)
+    at async withDb (src/lib/db.ts:55:11)
+    at async POST (src/app/api/pdf/split/route.ts:6:9)
+  23 |
+  24 |       // Create processing job
+> 25 |       const processingJob = await db.processingJob.create({
+     |                            ^
+  26 |         data: {
+  27 |           fileIds: JSON.stringify([fileId]),
+  28 |           operation: 'split', {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/pdf/split 500 in 70ms
